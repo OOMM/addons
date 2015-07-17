@@ -1,0 +1,13 @@
+-- BUG
+bleeding hollow dimming after proc - probably rppm/cd related, line 81
+-- TODO
+modify container size
+verify cd time is accurate
+add support for multiple buff for a single aura (heroism)
+add support for debuff check (heroism)
+add support for item (potion)
+order by originType > slot
+in game config: position/lock/unlock
+in game config: add/render tracked items
+move tracked items to separate file
+re init on events like equipment changing
