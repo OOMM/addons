@@ -1,0 +1,5 @@
+# addons/.gitignore
+*
+!.gitignore
+!DEO/
+!DEO/*
