@@ -25,7 +25,7 @@ function DEO:OnInitialize()
 	local itemid = 0
 	for slot=11,14,1 do
 		itemid = GetInventoryItemID("player", slot)
-		equipped[itemid] = itemid
+		equipped[itemid] = true
 	end
 	
 	-- Build IDs, IconPath, buff, rppm - make sure each of these is assigned within DEO:Create
@@ -37,7 +37,7 @@ function DEO:OnInitialize()
 			DEOTracking[key].enabled = true
 		elseif (DEOTracking[key].originType == "equipment") and (equipped[DEOTracking[key].itemid] ~= nil) then
 			DEOTracking[key].enabled = true
-			DEOTracking[key].equipmentIcon = GetItemIcon(equipped[DEOTracking[key].itemid])
+			DEOTracking[key].equipmentIcon = GetItemIcon(DEOTracking[key].itemid)
 		else
 			DEOTracking[key].enabled = false
 		end
