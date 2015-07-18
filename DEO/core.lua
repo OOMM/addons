@@ -5,6 +5,8 @@ end
 function DEO:OnInitialize()
 	DEO:Print(ChatFrame4, "Loaded.")
 	
+  --if _G.StanceBarFrame 
+  
 	-- Aura Properties
 	DEOTracking = {}
 	-- Enchant
@@ -12,7 +14,7 @@ function DEO:OnInitialize()
 	-- Equipment
 	DEOTracking["Howling Soul"] = { spid = 177046, rppm = 0.92, originType = "equipment", itemid = 119194}
 	DEOTracking["Archmage's Greater Incandescence"] = { spid = 177176, rppm = 0.92, originType = "equipment", itemid = 118306}
-	DEOTracking["Instability"] = { spid = 177051, rppm = 0.92, originType = "equipment", itemid = 113948}
+	DEOTracking["Instability"] = { spid = 177051, rppm = 0.92, originType = "equipment", itemid = 113948, originIcon = "spell_shadow_demonform"}
 	DEOTracking["Nightmare Fire"] = { spid = 162919, cd = 115, originType = "equipment", itemid = 112320}
 	-- Item
 	--DEOTracking["Draenic Intellect Potion"] = { spid = 156426, originType = "item", itemid = 109218}
@@ -24,7 +26,7 @@ function DEO:OnInitialize()
 	local equipped = {}
 	local itemid = 0
 	for slot=11,14,1 do
-		itemid = GetInventoryItemID("player", slot)
+		itemid = GetInventoryItemID("player", slot) or 0
 		equipped[itemid] = true
 	end
 	
@@ -74,55 +76,59 @@ function DEO:OnInitialize()
 		end
 	end
 	
-	-- Creating Container
+  -- Creating, Positioning Container - Checks position of Stance and Pet bars to determine y position
+
 	DEOContainer = CreateFrame("FRAME", "DEOContainer", UIParent)
-	DEOContainer:SetPoint("CENTER",-108,-425)
-	DEOContainer:SetWidth(1000)
-	DEOContainer:SetHeight(1000)
-	
+	DEOContainer:SetPoint("RIGHT",_G.MultiBarBottomRight,"LEFT",0,0)
+	DEOContainer:SetWidth(42*4)
+	DEOContainer:SetHeight(66)
+
 	-- Creating Auras
 	local parent = DEOContainer
 	for key,val in pairs(DEOTracking) do
 		if DEOTracking[key].enabled then
 			_G[DEOTracking[key].id] = DEO:Create(DEOTracking[key],parent)
 			_G[DEOTracking[key].id]:SetScale(UIParent:GetEffectiveScale())
+			_G[DEOTracking[key].id]:SetScale(UIParent:GetEffectiveScale()*.8)
 			DEO:SetState(_G[DEOTracking[key].id])
 			DEO:Print(ChatFrame4, "Created: ", _G[DEOTracking[key].id].id)
 		end
 	end
 end
+
 function DEO:Create(data, parent)
 	-- DEOContainer > aura - Aura is the the item we are tracking
-    local aura = CreateFrame("FRAME", data.id .. "Aura", parent)
+  local aura = CreateFrame("FRAME", data.id .. "Aura", parent)
 	aura.auraPosition = data.auraPosition
-	aura:SetPoint("CENTER",42*aura.auraPosition,0)
-	aura:SetWidth(36)
-	aura:SetHeight(36)
+	aura:SetPoint("RIGHT",-42*aura.auraPosition,0)
+	aura:SetWidth(38)
+	aura:SetHeight(38)
 	
 	-- DEOContainer > aura > icon - Icon of the spell
-    local icon = aura:CreateTexture(nil, "BACKGROUND")
-    aura.icon = icon
+  local icon = aura:CreateTexture(nil, "BACKGROUND")
+  aura.icon = icon
 	icon:SetAllPoints(aura)
 	
 	-- DEOContainer > aura > buttonBorder - Border, actually on top of the Icon
 	local buttonBorder = aura:CreateTexture(nil, "ARTWORK")
 	aura.buttonBorder = buttonBorder
-	buttonBorder:SetPoint("CENTER",0,0)
+  buttonBorder:SetPoint("CENTER",0,0)
 	buttonBorder:SetWidth(66)
 	buttonBorder:SetHeight(66)
-	buttonBorder:SetTexture("Interface\\Buttons\\UI-Quickslot2");	
+	buttonBorder:SetTexture("Interface\\Buttons\\UI-Quickslot2");
+
 	
 	-- DEOContainer > aura > cooldown - Cooldown Sweep
-    local cooldown = CreateFrame("COOLDOWN", nil, aura, "CooldownFrameTemplate")
-    aura.cooldown = cooldown
-    cooldown:SetAllPoints(icon)
-    cooldown:SetDrawEdge(false)
+  local cooldown = CreateFrame("COOLDOWN", nil, aura, "CooldownFrameTemplate")
+  aura.cooldown = cooldown
+  cooldown:SetAllPoints(icon)
+  cooldown:SetDrawEdge(false)
 
 	-- DEOContainer > aura > cooldown > textFrame > text - Text for when item is active
-    local textFrame = CreateFrame("frame", nil, aura)
-    textFrame:SetFrameLevel(cooldown:GetFrameLevel() + 1)
-    local text = textFrame:CreateFontString(nil, "OVERLAY")
-    aura.text = text
+  local textFrame = CreateFrame("frame", nil, aura)
+  textFrame:SetFrameLevel(cooldown:GetFrameLevel() + 1)
+  local text = textFrame:CreateFontString(nil, "OVERLAY")
+  aura.text = text
 	aura.text:SetFont("Fonts\\FRIZQT__.TTF",14,"OUTLINE")
 	aura.text:SetAllPoints(icon)
 	
@@ -139,6 +145,7 @@ function DEO:Create(data, parent)
 	
 	return aura
 end
+
 function DEO:COMBAT_LOG_EVENT_UNFILTERED(...)
 	local event, timeStamp, subevent, _, sguid, sname, _, _, dguid, dname, _, _, spid, spname = ...
 	if dguid == UnitGUID("player") then
@@ -204,7 +211,27 @@ function DEO:SetState(aura)
 	-- desaturate
 	-- update icon
 end
+
+
+function DEO:PLAYER_ENTERING_WORLD()
+  -- Need to check separate, later event since the MultiBarBottomLeft isn't shown until this point
+  -- DEO:Print(ChatFrame4, "PLAYER_ENTERING_WORLD")
+  --local SBFpoint, SBFrelativeTo, SBFrelativePoint, SBFxOffset, SBFyOffset = _G.StanceBarFrame:GetPoint() DEO:Print(ChatFrame4, SBFxOffset, SBFyOffset)
+  --local PABFpoint, _, _, PABFxOffset, PABFyOffset = _G.PetActionBarFrame:GetPoint()
+  local MBBL = _G.MultiBarBottomLeft:IsVisible()
+  --if floor(SBFyOffset) == 45 then MBBL = false end DEO:Print(ChatFrame4, MBBL, SBFyOffset)
+  --if SBFyOffset == 17 then MBBL = true end DEO:Print(ChatFrame4, MBBL, SBFyOffset)
+  --if floor(PABFyOffset) == 0 or floor(PABFxOffset) == 500 then PABF = false end DEO:Print(ChatFrame4, PABF, floor(PABFyOffset))
+  --if floor(PABFyOffset) >= 97 then PABF = true end DEO:Print(ChatFrame4, PABF, floor(PABFyOffset)) --142?
+  local DEOyOffset, DEOxOffset = 38, -30
+  if false == _G.MultiBarBottomLeft:IsVisible() then DEOyOffset = -5 end
+
+	--DEOContainer = CreateFrame("FRAME", "DEOContainer", UIParent)
+	DEOContainer:SetPoint("RIGHT",_G.MultiBarBottomRight,"LEFT",DEOxOffset,DEOyOffset)
+  --_G.PetActionBarFrame:SetPoint(PABFpoint,PABFxOffset, PABFyOffset)  
+end
 function DEO:OnDisable()
     -- Called when the addon is disabled
 end
 DEO:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+DEO:RegisterEvent("PLAYER_ENTERING_WORLD")

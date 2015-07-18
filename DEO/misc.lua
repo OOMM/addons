@@ -84,3 +84,6 @@ SLASH_READYCHECK1 = '/rc'
 
 SlashCmdList["CHECKROLE"] = function() InitiateRolePoll() end
 SLASH_CHECKROLE1 = '/cr'
+
+SlashCmdList["GETPOINT"] = function(frame) local a,b,c,d,e =  _G[frame]:GetPoint(); local f = b:GetName(); local g =_G[frame]:IsVisible(); print(frame,a,d,e,f,c,g) end
+SLASH_GETPOINT1 = '/getpoint'
