@@ -7,7 +7,7 @@ function DEO:TrackingList()
 	-- Aura Properties
 	DEOTracking = {}
 	-- Enchant
-	DEOTracking["Mark of Bleeding Hollow"] = { spid = 173322, cd = 0, rppm = 2.3, originType = "enchant", slot = 16}
+	DEOTracking["Mark of Bleeding Hollow"] = { spid = 173322, rppm = 2.3, originType = "enchant", slot = 16}
 	-- Equipment
 	DEOTracking["Howling Soul"] = { spid = 177046, rppm = 0.92, originType = "equipment", itemid = 119194}
 	DEOTracking["Archmage's Greater Incandescence"] = { spid = 177176, rppm = 0.92, originType = "equipment", itemid = 118306}
@@ -59,6 +59,12 @@ function DEO:TrackingSetIconPathAvail(tracking,equipped)
   end
 end
 
+function DEO:TrackingRPPMtoCD(tracking)
+  if nil == tracking.cd and nil == tracking.spidDebuff and tracking.rppm ~= nio and tracking.rppm ~= 0 then
+    tracking.cd = 60/tracking.rppm
+    p(tracking.cd)
+  end
+end 
 function DEO:TrackingBuild()
   -- Build IDs, IconPath, buff, rppm - make sure each of these is assigned within DEO:Create
   
@@ -88,9 +94,8 @@ function DEO:TrackingBuild()
 			DEOTracking[key].id = "DEO".. key:gsub('%W','')
 			
 			-- RPPM into Cooldown
-			if nil == DEOTracking[key].cd and nil == DEOTracking[key].spidDebuff and DEOTracking[key].rppm ~= 0 then
-				DEOTracking[key].cd = 60/DEOTracking[key].rppm
-			end
+      DEO:TrackingRPPMtoCD(DEOTracking[key])
+
 		end
 	end
 end
