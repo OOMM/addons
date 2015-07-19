@@ -26,7 +26,7 @@ function DEO:GetEquipped()
 	local itemid = 0
 	for slot=11,14,1 do
 		itemid = GetInventoryItemID("player", slot) or 0
-		equipped[itemid] = true
+		equipped[itemid] = slot
 	end
   return equipped
 end
@@ -62,17 +62,15 @@ end
 function DEO:TrackingRPPMtoCD(tracking)
   if nil == tracking.cd and nil == tracking.spidDebuff and tracking.rppm ~= nio and tracking.rppm ~= 0 then
     tracking.cd = 60/tracking.rppm
-    p(tracking.cd)
   end
-end 
+end
+
 function DEO:TrackingBuild()
   -- Build IDs, IconPath, buff, rppm - make sure each of these is assigned within DEO:Create
   
   -- What is equipped?
   local equipped = DEO:GetEquipped()
-	
-	local position = 0
-  
+	 
 	for key,val in pairs(DEOTracking) do
 
 		-- Should this be enabled?
@@ -81,12 +79,14 @@ function DEO:TrackingBuild()
     -- If it is enabled
 		if DEOTracking[key].enabled then
       
-			DEOTracking[key].auraPosition = position
-			position = position + 1
-			
+			-- Item Slot
+      if DEOTracking[key].slot == nil then
+        DEOTracking[key].slot = equipped[DEOTracking[key].itemid]
+      end
+      
 			-- Base Icon
       DEO:TrackingSetIconPathAvail(DEOTracking[key],equipped)
-			
+
 			-- Buff Name, might not be useful
 			DEOTracking[key].buff = key
 			
@@ -104,20 +104,45 @@ function DEO:CreateContainer()
   -- Creating Container - Is repositioned on PLAYER_ENTERING_WORLD
 	DEOContainer = CreateFrame("FRAME", "DEOContainer", UIParent)
 	DEOContainer:SetPoint("RIGHT",_G.MultiBarBottomRight,"LEFT",0,300)
-	DEOContainer:SetWidth(42*4)
+	DEOContainer:SetWidth(42*12)
 	DEOContainer:SetHeight(66)
 end
 
 function DEO:CreateAuras()
 	-- Creating Auras
-	local parent = DEOContainer
+  
+  -- Order from right to left based on slot,
+  -- non equipment will be given a custom negative slot id
+  --   17 - offhand
+  --   16 - mainhand
+  --   14 - trinket1
+  --   13 - trinket0
+  --   12 - ring1
+  --   11 - ring0
+  --  -10 - tier four piece
+  --   -9 - tier two piece
+  --   -8 - potion
+  --   -7 - heroism
+  
+  local order = {}
 	for key,val in pairs(DEOTracking) do
 		if DEOTracking[key].enabled then
-			_G[DEOTracking[key].id] = DEO:CreateAura(DEOTracking[key],parent)
-			_G[DEOTracking[key].id]:SetScale(.8)
-			DEO:SetState(_G[DEOTracking[key].id])
-			DEO:Print(ChatFrame4, "Created: ", _G[DEOTracking[key].id].id)
+      order[DEOTracking[key].slot] = DEOTracking[key].buff
 		end
+	end
+	local parent = DEOContainer
+  local tkey = 0
+  local position = 0
+	for k=17,-7,-1 do
+    tkey = order[k]
+    if tkey ~= nil then
+      DEOTracking[tkey].auraPosition = position
+      position = position + 1
+      _G[DEOTracking[tkey].id] = DEO:CreateAura(DEOTracking[tkey],parent)
+      _G[DEOTracking[tkey].id]:SetScale(.8)
+      DEO:SetState(_G[DEOTracking[tkey].id])
+      DEO:Print(ChatFrame4, "Created: ", _G[DEOTracking[tkey].id].slot, _G[DEOTracking[tkey].id].id)
+    end
 	end
 end
 
@@ -157,6 +182,7 @@ function DEO:CreateAura(data, parent)
 	aura.text:SetAllPoints(icon)
 	
 	aura.id = data.id
+	aura.slot = data.slot
 	aura.buff = data.buff
 	aura.iconPathUp = ""
 	aura.iconPathAvail = data.iconPathAvail
