@@ -2,6 +2,7 @@
 -- http://www.arenajunkies.com/topic/222642-default-ui-scripts/
 
 -- Class color UnitFrame names
+--[[
 local frame = CreateFrame("FRAME")
 frame:RegisterEvent("GROUP_ROSTER_UPDATE")
 frame:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -24,6 +25,7 @@ frame:SetScript("OnEvent", eventHandler)
 for _, BarTextures in pairs({TargetFrameNameBackground, FocusFrameNameBackground}) do
         BarTextures:SetTexture("Interface\\TargetingFrame\\UI-StatusBar")
 end
+]]--
 
 -- Hide button texts
 local toggle = 0
