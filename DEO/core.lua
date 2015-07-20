@@ -7,24 +7,35 @@ function DEO:TrackingList()
 	-- Aura Properties
 	DEOTracking = {}
 	-- Enchant
-	DEOTracking["Mark of Bleeding Hollow"] = { spid = 173322, rppm = 2.3, originType = "enchant", slot = 16}
+  local originType = "enchant"
+    DEOTracking["Mark of Bleeding Hollow"] = { spid = 173322, rppm = 2.3, slot = 16, originType = originType }
 	-- Equipment
-	DEOTracking["Howling Soul"] = { spid = 177046, rppm = 0.92, originType = "equipment", itemid = 119194}
-	DEOTracking["Archmage's Greater Incandescence"] = { spid = 177176, rppm = 0.92, originType = "equipment", itemid = 118306}
-	DEOTracking["Instability"] = { spid = 177051, rppm = 0.92, originType = "equipment", itemid = 113948}
-	DEOTracking["Nightmare Fire"] = { spid = 162919, cd = 115, originType = "equipment", itemid = 112320}
-	-- Item
-	--DEOTracking["Draenic Intellect Potion"] = { spid = 156426, originType = "item", itemid = 109218}
+  originType = "equipment"
+    DEOTracking["Howling Soul"] = { spid = 177046, itemid = 119194, rppm = 0.92, originType = originType }
+    DEOTracking["Archmage's Greater Incandescence"] = { spid = 177176, itemid = 118306, rppm = 0.92, originType = originType }
+    DEOTracking["Instability"] = { spid = 177051, itemid = 113948, rppm = 0.92, originType = originType }
+    DEOTracking["Nightmare Fire"] = { spid = 162919, itemid = 112320, cd = 115, originType = originType }
+	-- Tier
+  originType = "tier"
+    -- two piece
+      local slot = -2
+        DEOTracking["Demon Rush"] = { spid = 188857, itemid = {124156,124167,124173,124179,124162}, numitems = 2, slot = slot, originIcon = "ability_rogue_deadlymomentum", originType = originType }
+    -- four piece
+      -- slot = -1
+  -- Item
+  --originType = "potion"
+    --DEOTracking["Draenic Intellect Potion"] = { spid = 156426, itemid = 109218, originType = originType }
 	-- Heroism - special case
-	--DEOTracking["Heroism"] = { spid = {32182}, spidDebuff = 57723, originType = "heroism",}
-	--p(DEOTracking["Heroism"]["spid"][1])
+  --originType = "heroism"
+    --DEOTracking["Heroism"] = { spid = {32182}, spidDebuff = 57723, originType = originType }
 end
  
 function DEO:GetEquipped()
-	-- Getting equipped Ring and Trinket itemid
+	-- Getting equipped Tier slot, Weapon, Ring and Trinket itemid
 	local equipped = {}
+  local slots = {1,3,5,10,7,11,12,13,14,16,17}
 	local itemid = 0
-	for slot=11,14,1 do
+	for _,slot in pairs(slots) do  
 		itemid = GetInventoryItemID("player", slot) or 0
 		equipped[itemid] = slot
 	end
@@ -33,9 +44,20 @@ end
 
 function DEO:TrackingSetEnable(tracking,equipped)
   -- Are we going to show an aura for this tracked element?
-  if (tracking.originType ~= "equipment") then 
+
+  if (tracking.originType == "equipment") and (equipped[tracking.itemid] ~= nil) then
     tracking.enabled = true
-  elseif (tracking.originType == "equipment") and (equipped[tracking.itemid] ~= nil) then
+  elseif (tracking.originType == "tier") then
+    local i, numSetItemsEquipped = 0, 0
+    for i=1,5,1 do
+      if equipped[tracking.itemid[i]] ~= nil then
+        numSetItemsEquipped = numSetItemsEquipped + 1
+      end
+    end
+    if numSetItemsEquipped >= tracking.numitems then
+      tracking.enabled = true
+    end
+  elseif (tracking.originType == "enchant" or tracking.originType == "potion" or tracking.originType == "heroism") then 
     tracking.enabled = true
   else
     tracking.enabled = false
@@ -60,7 +82,7 @@ function DEO:TrackingSetIconPathAvail(tracking,equipped)
 end
 
 function DEO:TrackingRPPMtoCD(tracking)
-  if nil == tracking.cd and nil == tracking.spidDebuff and tracking.rppm ~= nio and tracking.rppm ~= 0 then
+  if nil == tracking.cd and nil == tracking.spidDebuff and tracking.rppm ~= nil and tracking.rppm ~= 0 then
     tracking.cd = 60/tracking.rppm
   end
 end
@@ -75,15 +97,15 @@ function DEO:TrackingBuild()
 
 		-- Should this be enabled?
     DEO:TrackingSetEnable(DEOTracking[key],equipped)
-    
+
     -- If it is enabled
 		if DEOTracking[key].enabled then
-      
+
 			-- Item Slot
       if DEOTracking[key].slot == nil then
-        DEOTracking[key].slot = equipped[DEOTracking[key].itemid]
+        DEOTracking[key].slot = equipped[DEOTracking[key].itemid] or 0
       end
-      
+
 			-- Base Icon
       DEO:TrackingSetIconPathAvail(DEOTracking[key],equipped)
 
@@ -95,7 +117,6 @@ function DEO:TrackingBuild()
 			
 			-- RPPM into Cooldown
       DEO:TrackingRPPMtoCD(DEOTracking[key])
-
 		end
 	end
 end
@@ -110,18 +131,23 @@ end
 
 function DEO:CreateAuras()
 	-- Creating Auras
-  
+
   -- Order from right to left based on slot,
   -- non equipment will be given a custom negative slot id
+  --  enchant
   --   17 - offhand
   --   16 - mainhand
+  --  equipment
   --   14 - trinket1
   --   13 - trinket0
   --   12 - ring1
   --   11 - ring0
-  --  -10 - tier four piece
-  --   -9 - tier two piece
-  --   -8 - potion
+  --  tier
+  --   -1 - tier four piece
+  --   -2 - tier two piece
+  --  item
+  --   -6 - potion
+  --  external
   --   -7 - heroism
   
   local order = {}
@@ -153,7 +179,6 @@ function DEO:CreateAura(data, parent)
 	aura:SetPoint("RIGHT",-42*aura.auraPosition,1)
 	aura:SetWidth(38)
 	aura:SetHeight(38)
-	
 	-- DEOContainer > aura > icon - Icon of the spell
   local icon = aura:CreateTexture(nil, "BACKGROUND")
   aura.icon = icon
