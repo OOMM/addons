@@ -1,12 +1,13 @@
 -- BUGS
-
+reuse auras on container update
+check for weapon enchant
 -- TODO
-build slots for non-equipment
+move tracked items to separate files by class, all
+rename 'tracking' to elements?
+simplify the enabled tracking
+-- FEATURES
+build slots for non-equipment?
 add support for multiple buff for a single aura (heroism)
 add support for debuff check (heroism)
 add support for item (potion)
 in game config: add/render tracked items
-move tracked items to separate files by class, all
-re init on events like equipment changing
-rename 'tracking' to elements?
-simplify the enabled tracking

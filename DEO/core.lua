@@ -118,14 +118,16 @@ function DEO:TrackingBuild()
 			-- Base Icon
       DEO:TrackingSetIconPathAvail(DEOTracking[key],equipped)
 
-
-			
 			-- ID (Buff Name aZ)
 			DEOTracking[key].id = "DEO".. key:gsub('%W','')
 			
 			-- RPPM into Cooldown
       DEO:TrackingRPPMtoCD(DEOTracking[key])
-		end
+		else
+      if _G[DEOTracking[key].id] ~= nil then 
+        _G[DEOTracking[key].id]:Hide()
+      end
+    end
 	end
 end
 
@@ -332,6 +334,26 @@ function DEO:Start()
   DEO:CreateContainer()
 	DEO:CreateAuras()
 end
+function DEO:ContainerUpdate()
+	DEO:Print(ChatFrame4, "Updated Items.")
+	DEO:TrackingList()
+	DEO:TrackingBuild()
+  
+  --DEO:CreateContainer()
+  --DEO:ContainerPosition()
+	DEO:CreateAuras()
+end
+function DEO:ContainerPosition()
+  local MBBL = _G.MultiBarBottomLeft:IsVisible()
+  local DEOyOffset, DEOxOffset = 38, -30
+  if false == _G.MultiBarBottomLeft:IsVisible() then DEOyOffset = -5 end
+	DEOContainer:SetPoint("RIGHT",_G.MultiBarBottomRight,"LEFT",DEOxOffset,DEOyOffset)
+end
+
+function DEO:UNIT_INVENTORY_CHANGED()
+ DEO:ContainerUpdate()
+
+end
 
 function DEO:PLAYER_LOGIN()
  DEO:Start()
@@ -339,10 +361,7 @@ end
 
 function DEO:PLAYER_ENTERING_WORLD()
   -- Need to check separate, later event since the MultiBarBottomLeft isn't shown until this point
-  local MBBL = _G.MultiBarBottomLeft:IsVisible()
-  local DEOyOffset, DEOxOffset = 38, -30
-  if false == _G.MultiBarBottomLeft:IsVisible() then DEOyOffset = -5 end
-	DEOContainer:SetPoint("RIGHT",_G.MultiBarBottomRight,"LEFT",DEOxOffset,DEOyOffset)
+  DEO:ContainerPosition()
 end
 
 function DEO:OnInitialize()
@@ -354,6 +373,7 @@ function DEO:OnDisable()
 end
 
 DEO:RegisterEvent("UNIT_AURA")
+DEO:RegisterEvent("UNIT_INVENTORY_CHANGED")
 DEO:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 DEO:RegisterEvent("PLAYER_ENTERING_WORLD")
 DEO:RegisterEvent("PLAYER_LOGIN")
