@@ -19,7 +19,7 @@ function DEO:TrackingList()
   originType = "tier"
     -- two piece
       local slot = -2
-        DEOTracking["Demon Rush"] = { spid = 188857, itemid = {124156,124167,124173,124179,124162}, numitems = 2, slot = slot, originIcon = "ability_rogue_deadlymomentum", originType = originType }
+        DEOTracking["Demon Rush"] = { spid = 188857, itemid = {124156,124167,124173,124179,124162}, numitems = 2, slot = slot, originIcon = "ability_rogue_deadlymomentum", originType = originType}
     -- four piece
       -- slot = -1
   -- Item
@@ -44,9 +44,15 @@ end
 
 function DEO:TrackingSetEnable(tracking,equipped)
   -- Are we going to show an aura for this tracked element?
-
+  if DEOEnabled == nil then DEOEnabled = {} end
+  local function enabler(tracking, state)
+    tracking.enabled = state
+    
+    if state then DEOEnabled[tracking.buff] = true end
+  end
+  
   if (tracking.originType == "equipment") and (equipped[tracking.itemid] ~= nil) then
-    tracking.enabled = true
+    enabler(tracking,true)
   elseif (tracking.originType == "tier") then
     local i, numSetItemsEquipped = 0, 0
     for i=1,5,1 do
@@ -55,12 +61,12 @@ function DEO:TrackingSetEnable(tracking,equipped)
       end
     end
     if numSetItemsEquipped >= tracking.numitems then
-      tracking.enabled = true
+      enabler(tracking,true)
     end
   elseif (tracking.originType == "enchant" or tracking.originType == "potion" or tracking.originType == "heroism") then 
-    tracking.enabled = true
+    enabler(tracking,true)
   else
-    tracking.enabled = false
+    enabler(tracking,false)
   end
 end
 
@@ -94,7 +100,10 @@ function DEO:TrackingBuild()
   local equipped = DEO:GetEquipped()
 	 
 	for key,val in pairs(DEOTracking) do
-
+  
+		-- Buff Name
+		DEOTracking[key].buff = key
+      
 		-- Should this be enabled?
     DEO:TrackingSetEnable(DEOTracking[key],equipped)
 
@@ -109,8 +118,7 @@ function DEO:TrackingBuild()
 			-- Base Icon
       DEO:TrackingSetIconPathAvail(DEOTracking[key],equipped)
 
-			-- Buff Name, might not be useful
-			DEOTracking[key].buff = key
+
 			
 			-- ID (Buff Name aZ)
 			DEOTracking[key].id = "DEO".. key:gsub('%W','')
@@ -203,15 +211,26 @@ function DEO:CreateAura(data, parent)
   textFrame:SetFrameLevel(cooldown:GetFrameLevel() + 1)
   local text = textFrame:CreateFontString(nil, "OVERLAY")
   aura.text = text
-	aura.text:SetFont("Fonts\\FRIZQT__.TTF",14,"OUTLINE")
+	aura.text:SetFont("Fonts\\FRIZQT__.TTF",16,"OUTLINE")
 	aura.text:SetAllPoints(icon)
+
+	-- DEOContainer > aura > cooldown > stacksFrame > stacks - Stacks for stacking buffs
+  local stacksFrame = CreateFrame("frame", nil, aura)
+  stacksFrame:SetFrameLevel(textFrame:GetFrameLevel() + 1)
+  local stacks = stacksFrame:CreateFontString(nil, "OVERLAY")
+  aura.stacks = stacks
+	aura.stacks:SetFont("Fonts\\ARIALN.TTF",13,"OUTLINE")
+  aura.stacks:SetPoint("BOTTOMLEFT",icon,"BOTTOMLEFT",3,3)
+  aura.stacks:SetHeight(15)
+  aura.stacks:SetHeight(15)
 	
 	aura.id = data.id
 	aura.slot = data.slot
 	aura.buff = data.buff
 	aura.iconPathUp = ""
 	aura.iconPathAvail = data.iconPathAvail
-	if data.cd ~= nil then aura.cd = data.cd end
+	aura.cd = data.cd or 0
+	aura.count = 0
 	if data.rppm ~= nil then aura.rppm = data.rppm end
 	aura.state = "avail"
 	aura.duration = 0
@@ -233,27 +252,29 @@ function DEO:SetState(aura)
 	-------------	
 	if state == "up" then
 		aura.icon:SetTexture(aura.iconPathUp)
-		LibStub("LibButtonGlow-1.0").ShowOverlayGlow(aura);
-		aura.cooldown:SetCooldown(aura.expirationTime - aura.duration, aura.cd)
+		LibStub("LibButtonGlow-1.0").ShowOverlayGlow(aura);   
+		if aura.cd > 0 then aura.cooldown:SetCooldown(aura.expirationTime - aura.duration, aura.cd) end
 		aura:SetScript("OnUpdate", UpdateTime)
+    if aura.count > 0 then aura.stacks:SetText(string.format("%.f",aura.count)) end
 	else
 		aura.icon:SetTexture(aura.iconPathAvail)
 		LibStub("LibButtonGlow-1.0").HideOverlayGlow(aura)
 		aura:SetScript("OnUpdate", nil)
 		aura.text:SetText("")
+		aura.stacks:SetText("")
 	end
 	-------------
 	-- STATE: cd
 	-------------
 	if state == "cd" then
-		aura.cooldown:Show()
+		if aura.cd > 0 then aura.cooldown:Show() end
 	else
 		aura.cooldown:Hide()
 	end
 	-------------
 	-- STATE: avail
 	-------------	
-	if state == "avail" then				
+	if state == "avail" then 
 	else
 	end
 	
@@ -262,21 +283,26 @@ function DEO:SetState(aura)
 	-- desaturate
 	-- update icon
 end
-
+function DEO:Refresh(spname)
+    local auraName = "DEO"..spname:gsub('%W','')
+    local _, _, icon, count, _, duration, expirationTime = UnitAura("player",spname)
+    if duration then
+      _G[auraName].state = "up"
+   -- _G["DEO"..spname:gsub('%W','')].timeStamp = timeStamp
+      _G[auraName].iconPathUp =  icon
+      if count > 0 then _G[auraName].count =  count  end        
+      _G[auraName].duration = duration
+      _G[auraName].expirationTime = expirationTime
+      DEO:SetState(_G[auraName])
+    end
+end
 function DEO:COMBAT_LOG_EVENT_UNFILTERED(...)
 	local event, timeStamp, subevent, _, sguid, sname, _, _, dguid, dname, _, _, spid, spname = ...
 	if dguid == UnitGUID("player") then
-		local isSpellTracked = _G.DEOTracking[spname] ~= nil
-    if subevent == "SPELL_AURA_APPLIED" or subevent == "SPELL_AURA_REFRESH" then
+		local isSpellTracked = DEOEnabled[spname] or nil
+    if subevent == "SPELL_AURA_APPLIED" or subevent == "SPELL_AURA_REFRESH" or subevent == "SPELL_AURA_APPLIED_DOSE" then
       if isSpellTracked then
-        local auraName = "DEO"..spname:gsub('%W','')
-        local _, _, icon, _, _, duration, expirationTime = UnitAura("player",spname)		
-     -- _G["DEO"..spname:gsub('%W','')].timeStamp = timeStamp
-        _G[auraName].iconPathUp =  icon
-        _G[auraName].duration = duration
-        _G[auraName].expirationTime = expirationTime				
-				_G[auraName].state = "up"
-				DEO:SetState(_G[auraName])
+        DEO:Refresh(spname)
 			end
 		elseif subevent == "SPELL_AURA_REMOVED" then
 			if isSpellTracked then
@@ -286,8 +312,17 @@ function DEO:COMBAT_LOG_EVENT_UNFILTERED(...)
 			end
 		end			
 	end
-end	
+end
+	
+function DEO:UNIT_AURA(...)
+  local a,unit = ...
 
+  if unit == "player" then
+    for key,val in pairs(DEOEnabled) do
+      DEO:Refresh(key)
+    end
+  end
+end
 
 function DEO:Start()
 	DEO:Print(ChatFrame4, "Loaded.")
@@ -318,6 +353,7 @@ function DEO:OnDisable()
     -- Called when the addon is disabled
 end
 
+DEO:RegisterEvent("UNIT_AURA")
 DEO:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 DEO:RegisterEvent("PLAYER_ENTERING_WORLD")
 DEO:RegisterEvent("PLAYER_LOGIN")

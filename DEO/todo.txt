@@ -9,3 +9,4 @@ in game config: add/render tracked items
 move tracked items to separate files by class, all
 re init on events like equipment changing
 rename 'tracking' to elements?
+simplify the enabled tracking
