@@ -2,6 +2,11 @@
 ## Title: DEO
 ## Notes: 
 
-embeds.xml
+Embeds.xml
 Core.lua
+DEO.lua
+Frames.lua
+Spells.lua
+SpellsBuild.lua
+Events.lua
 Misc.lua
