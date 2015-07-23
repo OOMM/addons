@@ -14,7 +14,7 @@ end
 function DEO:GetSpec()
 	_, DEOPlayerClass = UnitClass("player")
 	DEOPlayerSpec = GetSpecialization() --nil if under level 10
-  DEO:Print(ChatFrame4,DEOPlayerClass, DEOPlayerSpec)
+  if DEODebug then DEO:Print(ChatFrame4,"Player Class:",DEOPlayerClass, "Spec:", DEOPlayerSpec) end
 end
 
 function DEO:SpellsSetEnable(spell,equipped)
@@ -25,10 +25,10 @@ function DEO:SpellsSetEnable(spell,equipped)
     
     if state then 
       DEOEnabled[spell.buff] = true 
-      DEO:Print(ChatFrame4, "|cffD3965DEnabled:|r", spell.buff)
+      if DEODebug then DEO:Print(ChatFrame4, "|cffD3965DEnabled:|r", spell.buff) end
     else
       DEOEnabled[spell.buff] = false 
-      DEO:Print(ChatFrame4, "|cff713B0FDisabled:|r", spell.buff)
+      if DEODebug then DEO:Print(ChatFrame4, "|cff713B0FDisabled:|r", spell.buff) end
     end
   end
   
@@ -91,7 +91,7 @@ function DEO:SpellsBuild()
       --if DEOSpells[key].slot == nil then
       if DEOSpells[key].originType == "equipment" or DEOSpells[key].originType == "tier" then
         DEOSpells[key].slot = equipped[DEOSpells[key].itemid] or 0
-        DEO:Print(ChatFrame4,"|cffCBE5DASlot Set:|r",DEOSpells[key].buff, equipped[DEOSpells[key].itemid] or 0)
+        if DEODebug then DEO:Print(ChatFrame4,"|cffCBE5DASlot Set:|r",DEOSpells[key].buff, equipped[DEOSpells[key].itemid] or 0) end
       end
 
       DEO:SpellsSetIconPathAvail(DEOSpells[key],equipped)

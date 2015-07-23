@@ -1,4 +1,3 @@
-
 function DEO:CreateContainer()
   -- Creating Container - Is repositioned on PLAYER_ENTERING_WORLD
 	if  nil == DEOContainer  then
@@ -6,9 +5,9 @@ function DEO:CreateContainer()
     DEOContainer:SetPoint("RIGHT",_G.MultiBarBottomRight,"LEFT",0,300)
     DEOContainer:SetWidth(42*12)
     DEOContainer:SetHeight(66)
-    DEO:Print(ChatFrame4, "|cffC03E6CCreated:|r","Container")
+    if DEODebug then DEO:Print(ChatFrame4, "|cffC03E6CCreated:|r","Container") end
   else
-    DEO:Print(ChatFrame4, "|cffF2C43BReused:|r","Container")
+    if DEODebug then DEO:Print(ChatFrame4, "|cffF2C43BReused:|r","Container") end
   end
 end
 
@@ -38,9 +37,9 @@ function DEO:CreateAuras()
 	for key,_ in pairs(DEOSpells) do
 		if DEOSpells[key].enabled then
       order[DEOSpells[key].slot] = DEOSpells[key].buff 
-      DEO:Print(ChatFrame4, "|cffA2EFDFOrdered:|r","|cffD3965DEnabled:|r",DEOSpells[key].slot,string.sub(DEOSpells[key].buff or "nil",0,4), string.sub(order[DEOSpells[key].slot] or "nil",0,4) )
+      if DEODebug then DEO:Print(ChatFrame4, "|cffA2EFDFOrdered:|r","|cffD3965DEnabled:|r","for",DEOSpells[key].slot,string.sub(DEOSpells[key].buff or "nil",0,4), "=", string.sub(order[DEOSpells[key].slot] or "nil",0,4) ) end
 		else 
-      DEO:Print(ChatFrame4, "|cffA2EFDFOrdered:|r","|cff713B0FSkipped:|r",DEOSpells[key].slot,string.sub(DEOSpells[key].buff or "nil",0,4), string.sub(order[DEOSpells[key].slot] or "nil",0,4) )
+      if DEODebug then DEO:Print(ChatFrame4, "|cffA2EFDFOrdered:|r","|cff713B0FSkipped:|r","for",DEOSpells[key].slot,string.sub(DEOSpells[key].buff or "nil",0,4), "=",string.sub(order[DEOSpells[key].slot] or "nil",0,4) ) end
     end
     
 	end
@@ -58,7 +57,7 @@ function DEO:CreateAuras()
         local frameId = "DEOAura"..slot
         if _G[frameId] ~= nil then
           _G[frameId]:Hide()
-          DEO:Print(ChatFrame4, "|cff713B0FHid:|r", frameId)
+          if DEODebug then DEO:Print(ChatFrame4, "|cff713B0FHid:|r", frameId) end
         end
     end
 	end
@@ -70,7 +69,7 @@ function DEO:CreateAura(data, parent, position,slot)
   
   if nil == _G[frameId] then 
     aura = CreateFrame("FRAME", frameId, parent)
-    DEO:Print(ChatFrame4, "|cffC03E6CCreated:|r", frameId, data.id) 
+    if DEODebug then DEO:Print(ChatFrame4, "|cffC03E6CCreated:|r", frameId, data.id) end
     aura:SetPoint("RIGHT",-42*position,1)
     aura:SetWidth(38)
     aura:SetHeight(38)
@@ -108,7 +107,7 @@ function DEO:CreateAura(data, parent, position,slot)
     aura.stacks:SetHeight(15)
   else
     aura = _G[frameId]
-    DEO:Print(ChatFrame4, "|cffF2C43BReused:|r", frameId, data.id)
+    if DEODebug then DEO:Print(ChatFrame4, "|cffF2C43BReused:|r", frameId, data.id) end
   end
   
   aura.icon:SetTexture(aura.iconPathUp)
