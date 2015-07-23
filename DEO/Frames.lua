@@ -1,10 +1,15 @@
 
 function DEO:CreateContainer()
   -- Creating Container - Is repositioned on PLAYER_ENTERING_WORLD
-	DEOContainer = CreateFrame("FRAME", "DEOContainer", UIParent)
-	DEOContainer:SetPoint("RIGHT",_G.MultiBarBottomRight,"LEFT",0,300)
-	DEOContainer:SetWidth(42*12)
-	DEOContainer:SetHeight(66)
+	if  nil == DEOContainer  then
+    DEOContainer = CreateFrame("FRAME", "DEOContainer", UIParent)
+    DEOContainer:SetPoint("RIGHT",_G.MultiBarBottomRight,"LEFT",0,300)
+    DEOContainer:SetWidth(42*12)
+    DEOContainer:SetHeight(66)
+    DEO:Print(ChatFrame4, "Container created.")
+  else
+    DEO:Print(ChatFrame4, "Container already exists.")
+  end
 end
 
 function DEO:CreateAuras()
@@ -32,31 +37,46 @@ function DEO:CreateAuras()
 	for key,val in pairs(DEOSpells) do
 		if DEOSpells[key].enabled then
       order[DEOSpells[key].slot] = DEOSpells[key].buff
+      DEO:Print(ChatFrame4, "Ordered:",DEOSpells[key].buff)
 		end
 	end
 	local parent = DEOContainer
   local tkey = 0
   local position = 0
-	for k=17,-7,-1 do
-    tkey = order[k]
+	for slot=17,-7,-1 do
+    tkey = order[slot]
     if tkey ~= nil then
-      DEOSpells[tkey].auraPosition = position
-      position = position + 1
-      _G[DEOSpells[tkey].id] = DEO:CreateAura(DEOSpells[tkey],parent)
+      --_G[DEOSpells[tkey].id] = DEO:CreateAura(DEOSpells[tkey],parent)
+      _G[DEOSpells[tkey].id] = DEO:CreateAura(DEOSpells[tkey],parent,position,slot)
       _G[DEOSpells[tkey].id]:SetScale(.8)
       DEO:SetState(_G[DEOSpells[tkey].id])
-      DEO:Print(ChatFrame4, "Created: ", _G[DEOSpells[tkey].id].slot, _G[DEOSpells[tkey].id].id)
+      --DEO:Print(ChatFrame4, "Created: ", _G[DEOSpells[tkey].id].slot, _G[DEOSpells[tkey].id].id)
+      position = position + 1
+    else
+        local frameId = "DEOAura"..slot
+        if _G[frameId] ~= nil then
+          _G[frameId]:Hide()
+          DEO:Print(ChatFrame4, "Hid Empty:", frameId)
+        end
     end
 	end
 end
 
-function DEO:CreateAura(data, parent)
+function DEO:CreateAura(data, parent, position,slot)
 	-- DEOContainer > aura - Aura is the the item we are tracking
-  local aura = CreateFrame("FRAME", data.id .. "Aura", parent)
-	aura.auraPosition = data.auraPosition
-	aura:SetPoint("RIGHT",-42*aura.auraPosition,1)
-	aura:SetWidth(38)
-	aura:SetHeight(38)
+  local aura
+  local frameId = "DEOAura"..slot
+  if nil == _G[frameId] then 
+    aura = CreateFrame("FRAME", frameId, parent)
+    DEO:Print(ChatFrame4, "Created:", frameId, data.id)
+  else
+    aura = _G[frameId]
+    DEO:Print(ChatFrame4, "Reused:", frameId, data.id)
+  end
+  aura:Show()
+  aura:SetPoint("RIGHT",-42*position,1)
+  aura:SetWidth(38)
+  aura:SetHeight(38)
 	-- DEOContainer > aura > icon - Icon of the spell
   local icon = aura:CreateTexture(nil, "BACKGROUND")
   aura.icon = icon

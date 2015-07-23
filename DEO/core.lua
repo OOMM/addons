@@ -56,10 +56,11 @@ function DEO:Start()
   DEO:SpellsLoad()
 	DEO:TrackingBuild()
   
-    DEO:CreateContainer()
+  DEO:CreateContainer()
 	DEO:CreateAuras()
 end
 function DEO:ContainerUpdate()
+ DEO:Print(ChatFrame4, GetTime())
 	DEO:Print(ChatFrame4, "Updated Items.")
 	DEO:TrackingBuild()
   

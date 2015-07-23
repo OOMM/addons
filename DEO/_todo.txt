@@ -1,10 +1,6 @@
 -- BUGS
-reuse auras on container update
 check for weapon enchant
-check class and spec for tier
 -- TODO
-move tracked items to separate files by class, all
-rename 'tracking' to elements?
 simplify the enabled tracking
 -- FEATURES
 build slots for non-equipment?

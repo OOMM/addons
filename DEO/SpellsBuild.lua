@@ -17,7 +17,13 @@ function DEO:TrackingSetEnable(tracking,equipped)
   local function enabler(tracking, state)
     tracking.enabled = state
     
-    if state then DEOEnabled[tracking.buff] = true end
+    if state then 
+      DEOEnabled[tracking.buff] = true 
+      DEO:Print(ChatFrame4, "Enabled: ", tracking.buff)
+    else
+      DEOEnabled[tracking.buff] = false 
+      DEO:Print(ChatFrame4, "Disabled: ", tracking.buff)
+    end
   end
   
   if (tracking.originType == "equipment") and (equipped[tracking.itemid] ~= nil) then
@@ -31,6 +37,8 @@ function DEO:TrackingSetEnable(tracking,equipped)
     end
     if numSetItemsEquipped >= tracking.numitems then
       enabler(tracking,true)
+    else
+      enabler(tracking,false)
     end
   elseif (tracking.originType == "enchant" or tracking.originType == "potion" or tracking.originType == "heroism") then 
     enabler(tracking,true)
