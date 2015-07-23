@@ -1,5 +1,9 @@
 # addons/.gitignore
 *
 !.gitignore
-!DEO/
-!DEO/*
+!DEO_Additions/
+!DEO_Additions/*
+!DEO_Text_Hide/
+!DEO_Text_Hide/*
+!DEO_Tracking/
+!DEO_Tracking/*
