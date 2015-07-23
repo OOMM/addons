@@ -1,9 +1,6 @@
 DEO = LibStub("AceAddon-3.0"):NewAddon("DEO", "AceConsole-3.0", "AceEvent-3.0", "AceTimer-3.0")
 
-
 function DEO:SetState(aura)
-	-- Set the change in the proper state and revert the change in that state's else
-	-- Avail is only used on init, no event actually calls it again for the moment
 	local state = aura.state
   
 	local function UpdateTime()
@@ -25,7 +22,9 @@ function DEO:SetState(aura)
 	end
 
 	if state == "cd" then
-		if aura.cd > 0 then aura.cooldown:Show() end
+		if aura.cd > 0 then 
+      aura.cooldown:Show()
+    end
 	else
 		aura.cooldown:Hide()
 	end
@@ -35,12 +34,13 @@ function DEO:SetState(aura)
 	end
 
 end
+
 function DEO:Refresh(spname)
     local auraName = "DEO"..spname:gsub('%W','')
     local _, _, icon, count, _, duration, expirationTime = UnitAura("player",spname)
+    
     if duration then
       _G[auraName].state = "up"
-   -- _G["DEO"..spname:gsub('%W','')].timeStamp = timeStamp
       _G[auraName].iconPathUp =  icon
       if count > 0 then _G[auraName].count =  count  end        
       _G[auraName].duration = duration
@@ -50,22 +50,19 @@ function DEO:Refresh(spname)
 end
 
 function DEO:Start()
+	--DEO:Print(ChatFrame4, "Loaded.")
 
-	DEO:Print(ChatFrame4, "Loaded.")
 	DEO:GetSpec()
   DEO:SpellsLoad()
-	DEO:TrackingBuild()
-  
+	DEO:SpellsBuild()
   DEO:CreateContainer()
 	DEO:CreateAuras()
 end
+
 function DEO:ContainerUpdate()
- DEO:Print(ChatFrame4, GetTime())
-	DEO:Print(ChatFrame4, "Updated Items.")
-	DEO:TrackingBuild()
+	DEO:Print(ChatFrame4, "|cffFF0000Updated Items.|r")
   
-  --DEO:CreateContainer()
-  --DEO:ContainerPosition()
+	DEO:SpellsBuild()
 	DEO:CreateAuras()
 end
 

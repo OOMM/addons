@@ -2,6 +2,9 @@
 check for weapon enchant
 -- TODO
 simplify the enabled tracking
+add more examples to readme
+research all class bonuses and trinkets to look for additional tracking types
+movable with slash command
 -- FEATURES
 build slots for non-equipment?
 add support for multiple buff for a single aura (heroism)

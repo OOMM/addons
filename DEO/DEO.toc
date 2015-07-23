@@ -4,7 +4,6 @@
 
 Embeds.xml
 Core.lua
-DEO.lua
 Frames.lua
 Spells.lua
 SpellsBuild.lua

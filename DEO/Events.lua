@@ -36,7 +36,7 @@ function DEO:UNIT_AURA(_,unit)
 end
 
 function DEO:UNIT_INVENTORY_CHANGED()
- DEO:ContainerUpdate()
+  DEO:ContainerUpdate()
 end
 
 DEO:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")

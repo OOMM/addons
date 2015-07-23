@@ -6,15 +6,13 @@ function DEO:CreateContainer()
     DEOContainer:SetPoint("RIGHT",_G.MultiBarBottomRight,"LEFT",0,300)
     DEOContainer:SetWidth(42*12)
     DEOContainer:SetHeight(66)
-    DEO:Print(ChatFrame4, "Container created.")
+    DEO:Print(ChatFrame4, "|cffC03E6CCreated:|r","Container")
   else
-    DEO:Print(ChatFrame4, "Container already exists.")
+    DEO:Print(ChatFrame4, "|cffF2C43BReused:|r","Container")
   end
 end
 
 function DEO:CreateAuras()
-	-- Creating Auras
-
   -- Order from right to left based on slot,
   -- non equipment will be given a custom negative slot id
   --  enchant
@@ -34,11 +32,17 @@ function DEO:CreateAuras()
   --   -7 - heroism
   
   local order = {}
-	for key,val in pairs(DEOSpells) do
+  for slot=17,-7,-1 do
+    order[slot] = nil
+  end
+	for key,_ in pairs(DEOSpells) do
 		if DEOSpells[key].enabled then
-      order[DEOSpells[key].slot] = DEOSpells[key].buff
-      DEO:Print(ChatFrame4, "Ordered:",DEOSpells[key].buff)
-		end
+      order[DEOSpells[key].slot] = DEOSpells[key].buff 
+      DEO:Print(ChatFrame4, "|cffA2EFDFOrdered:|r","|cffD3965DEnabled:|r",DEOSpells[key].slot,string.sub(DEOSpells[key].buff or "nil",0,4), string.sub(order[DEOSpells[key].slot] or "nil",0,4) )
+		else 
+      DEO:Print(ChatFrame4, "|cffA2EFDFOrdered:|r","|cff713B0FSkipped:|r",DEOSpells[key].slot,string.sub(DEOSpells[key].buff or "nil",0,4), string.sub(order[DEOSpells[key].slot] or "nil",0,4) )
+    end
+    
 	end
 	local parent = DEOContainer
   local tkey = 0
@@ -46,74 +50,69 @@ function DEO:CreateAuras()
 	for slot=17,-7,-1 do
     tkey = order[slot]
     if tkey ~= nil then
-      --_G[DEOSpells[tkey].id] = DEO:CreateAura(DEOSpells[tkey],parent)
       _G[DEOSpells[tkey].id] = DEO:CreateAura(DEOSpells[tkey],parent,position,slot)
       _G[DEOSpells[tkey].id]:SetScale(.8)
       DEO:SetState(_G[DEOSpells[tkey].id])
-      --DEO:Print(ChatFrame4, "Created: ", _G[DEOSpells[tkey].id].slot, _G[DEOSpells[tkey].id].id)
       position = position + 1
     else
         local frameId = "DEOAura"..slot
         if _G[frameId] ~= nil then
           _G[frameId]:Hide()
-          DEO:Print(ChatFrame4, "Hid Empty:", frameId)
+          DEO:Print(ChatFrame4, "|cff713B0FHid:|r", frameId)
         end
     end
 	end
 end
 
 function DEO:CreateAura(data, parent, position,slot)
-	-- DEOContainer > aura - Aura is the the item we are tracking
   local aura
   local frameId = "DEOAura"..slot
+  
   if nil == _G[frameId] then 
     aura = CreateFrame("FRAME", frameId, parent)
-    DEO:Print(ChatFrame4, "Created:", frameId, data.id)
+    DEO:Print(ChatFrame4, "|cffC03E6CCreated:|r", frameId, data.id) 
+    aura:SetPoint("RIGHT",-42*position,1)
+    aura:SetWidth(38)
+    aura:SetHeight(38)
+
+    local icon = aura:CreateTexture(nil, "BACKGROUND")
+    aura.icon = icon
+    icon:SetAllPoints(aura)
+    
+    local buttonBorder = aura:CreateTexture(nil, "ARTWORK")
+    aura.buttonBorder = buttonBorder
+    buttonBorder:SetPoint("CENTER",0,-1)
+    buttonBorder:SetWidth(66)
+    buttonBorder:SetHeight(66)
+    buttonBorder:SetTexture("Interface\\Buttons\\UI-Quickslot2");
+
+    local cooldown = CreateFrame("COOLDOWN", nil, aura, "CooldownFrameTemplate")
+    aura.cooldown = cooldown
+    cooldown:SetAllPoints(icon)
+    cooldown:SetDrawEdge(false)
+
+    local textFrame = CreateFrame("frame", nil, aura)
+    textFrame:SetFrameLevel(cooldown:GetFrameLevel() + 1)
+    local text = textFrame:CreateFontString(nil, "OVERLAY")
+    aura.text = text
+    aura.text:SetFont("Fonts\\FRIZQT__.TTF",16,"OUTLINE")
+    aura.text:SetAllPoints(icon)
+
+    local stacksFrame = CreateFrame("frame", nil, aura)
+    stacksFrame:SetFrameLevel(textFrame:GetFrameLevel() + 1)
+    local stacks = stacksFrame:CreateFontString(nil, "OVERLAY")
+    aura.stacks = stacks
+    aura.stacks:SetFont("Fonts\\ARIALN.TTF",13,"OUTLINE")
+    aura.stacks:SetPoint("BOTTOMLEFT",icon,"BOTTOMLEFT",3,3)
+    aura.stacks:SetHeight(15)
+    aura.stacks:SetHeight(15)
   else
     aura = _G[frameId]
-    DEO:Print(ChatFrame4, "Reused:", frameId, data.id)
+    DEO:Print(ChatFrame4, "|cffF2C43BReused:|r", frameId, data.id)
   end
+  
+  aura.icon:SetTexture(aura.iconPathUp)
   aura:Show()
-  aura:SetPoint("RIGHT",-42*position,1)
-  aura:SetWidth(38)
-  aura:SetHeight(38)
-	-- DEOContainer > aura > icon - Icon of the spell
-  local icon = aura:CreateTexture(nil, "BACKGROUND")
-  aura.icon = icon
-	icon:SetAllPoints(aura)
-	
-	-- DEOContainer > aura > buttonBorder - Border, actually on top of the Icon
-	local buttonBorder = aura:CreateTexture(nil, "ARTWORK")
-	aura.buttonBorder = buttonBorder
-  buttonBorder:SetPoint("CENTER",0,-1)
-	buttonBorder:SetWidth(66)
-	buttonBorder:SetHeight(66)
-	buttonBorder:SetTexture("Interface\\Buttons\\UI-Quickslot2");
-
-	-- DEOContainer > aura > cooldown - Cooldown Sweep
-  local cooldown = CreateFrame("COOLDOWN", nil, aura, "CooldownFrameTemplate")
-  aura.cooldown = cooldown
-  cooldown:SetAllPoints(icon)
-  cooldown:SetDrawEdge(false)
-
-	-- DEOContainer > aura > cooldown > textFrame > text - Text for when item is active
-  local textFrame = CreateFrame("frame", nil, aura)
-  textFrame:SetFrameLevel(cooldown:GetFrameLevel() + 1)
-  local text = textFrame:CreateFontString(nil, "OVERLAY")
-  aura.text = text
-	aura.text:SetFont("Fonts\\FRIZQT__.TTF",16,"OUTLINE")
-	aura.text:SetAllPoints(icon)
-
-	-- DEOContainer > aura > cooldown > stacksFrame > stacks - Stacks for stacking buffs
-  local stacksFrame = CreateFrame("frame", nil, aura)
-  stacksFrame:SetFrameLevel(textFrame:GetFrameLevel() + 1)
-  local stacks = stacksFrame:CreateFontString(nil, "OVERLAY")
-  aura.stacks = stacks
-	aura.stacks:SetFont("Fonts\\ARIALN.TTF",13,"OUTLINE")
-  aura.stacks:SetPoint("BOTTOMLEFT",icon,"BOTTOMLEFT",3,3)
-  aura.stacks:SetHeight(15)
-  aura.stacks:SetHeight(15)
-	
 	aura.id = data.id
 	aura.slot = data.slot
 	aura.buff = data.buff
