@@ -1,5 +1,5 @@
 #OOMM
-##DEO Tracking
+##⚡ DEO Tracking
 ![alt tag](https://github.com/OOMM/addons/blob/master/DEO/tracking.jpg)
 > Track Lord Season Begins
 
@@ -27,8 +27,11 @@ add support for multiple buff for a single aura (heroism)
 add support for debuff check (heroism)
 add support for item (potion)
 in game config: add/render tracked items
-##DEO Text Hide
+
+##🔮 DEO Text Hide
 Hide keybind and macro text from buttons.
+
+##💊 DEO Additions
 ###BUGS
 ###TODO
 add raid marker to player
