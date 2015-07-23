@@ -88,8 +88,7 @@ function DEO:SpellsBuild()
 
 		if DEOSpells[key].enabled then
 
-      --if DEOSpells[key].slot == nil then
-      if DEOSpells[key].originType == "equipment" or DEOSpells[key].originType == "tier" then
+      if DEOSpells[key].originType == "equipment" then
         DEOSpells[key].slot = equipped[DEOSpells[key].itemid] or 0
         if DEODebug then DEO:Print(ChatFrame4,"|cffCBE5DASlot Set:|r",DEOSpells[key].buff, equipped[DEOSpells[key].itemid] or 0) end
       end

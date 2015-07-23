@@ -37,9 +37,9 @@ function DEO:CreateAuras()
 	for key,_ in pairs(DEOSpells) do
 		if DEOSpells[key].enabled then
       order[DEOSpells[key].slot] = DEOSpells[key].buff 
-      if DEODebug then DEO:Print(ChatFrame4, "|cffA2EFDFOrdered:|r","|cffD3965DEnabled:|r","for",DEOSpells[key].slot,string.sub(DEOSpells[key].buff or "nil",0,4), "=", string.sub(order[DEOSpells[key].slot] or "nil",0,4) ) end
+      if DEODebug then DEO:Print(ChatFrame4, "|cffA2EFDFOrdered:|r","|cffD3965DEnabled:|r",DEOSpells[key].slot,"for",string.sub(DEOSpells[key].buff or "nil",0,4), "=", string.sub(order[DEOSpells[key].slot] or "nil",0,4) ) end
 		else 
-      if DEODebug then DEO:Print(ChatFrame4, "|cffA2EFDFOrdered:|r","|cff713B0FSkipped:|r","for",DEOSpells[key].slot,string.sub(DEOSpells[key].buff or "nil",0,4), "=",string.sub(order[DEOSpells[key].slot] or "nil",0,4) ) end
+      if DEODebug then DEO:Print(ChatFrame4, "|cffA2EFDFOrdered:|r","|cff713B0FSkipped:|r",DEOSpells[key].slot,"for",string.sub(DEOSpells[key].buff or "nil",0,4), "=",string.sub(order[DEOSpells[key].slot] or "nil",0,4) ) end
     end
     
 	end
