@@ -13,17 +13,17 @@ DEOSpells["Nightmare Fire"] = {
 }
 ```
 
-###BUGS
+######Bugs
 * check for weapon enchant
 
-###TODO
+######To Do
 * simplify the enabled tracking
 * add support for debuff tracking
 * add more examples to readme
 * research all class bonuses and trinkets to look for additional tracking types
 * movable with slash command
 
-###FUTURE FEATURES
+######Future Features
 * build slots for non-equipment?
 * add support for multiple buff for a single aura (heroism)
 * add support for debuff check (heroism)
@@ -37,13 +37,14 @@ DEOSpells["Nightmare Fire"] = {
 > Too much clutter
 
 Hide keybind and macro text from buttons.
-###BUGS
+######Bugs
+* 
 
-###TODO
+######To Do
 * add slash command toggle
 
-###FUTURE FEATURES
-
+######Future Features
+* 
 
 - - - -
   
@@ -55,9 +56,11 @@ Contains:
 
 * Raid Marker Icon for the Player Unit Frame
 
-###BUGS
+######Bugs
+* 
 
-###TODO
+######To Do
+* 
 
-###FUTURE FEATURES
+######Future Features
 * dungeon map
