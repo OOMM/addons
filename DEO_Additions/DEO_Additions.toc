@@ -2,4 +2,5 @@
 ## Title: DEO:|cff74E4E7Additions|r
 ## Notes: Additional UI modifications
 
+Embeds.xml
 Additions.lua
