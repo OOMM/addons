@@ -3,7 +3,10 @@
 !.gitignore
 !DEO_Additions/
 !DEO_Additions/*
+!DEO_Additions.jpg
 !DEO_Text_Hide/
 !DEO_Text_Hide/*
+!DEO_Text_Hide.jpg
 !DEO_Tracking/
 !DEO_Tracking/*
+!DEO_Tracking.jpg
