@@ -4,7 +4,7 @@
 > Track Lord Season Begins
 
 Automatically tracks procs for weapon enchants, set bonuses, rings, and trinkets. Add new buff tracking by adding the following under the appropriate spec to Spells.lua
-```
+```lua
 DEOSpells["Nightmare Fire"] = { 
   spid = 162919, 
   itemid = 112320, 
@@ -31,12 +31,20 @@ in game config: add/render tracked items
 ##🔮 DEO Text Hide
 ![alt tag](https://github.com/OOMM/addons/blob/master/DEO_Text_Hide.jpg)
 > Too much clutter
+
 Hide keybind and macro text from buttons.
+###BUGS
+###TODO
+add slash command toggle
+###FEATURES
 
 ##💊 DEO Additions
 ![alt tag](https://github.com/OOMM/addons/blob/master/DEO_Additions.jpg)
 > Lil things here and there
+
+Contains:
+Raid Marker Icon for the Player Unit Frame
 ###BUGS
 ###TODO
-add raid marker to player
 ###FEATURES
+dungeon map
