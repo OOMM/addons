@@ -47,7 +47,7 @@ Hide keybind and macro text from buttons.
 
   
     
-###:pill: DEO Additions
+#### :pill: DEO Additions
 ![alt tag](https://github.com/OOMM/addons/blob/master/DEO_Additions.jpg)
 > Lil things here and there
 
