@@ -14,19 +14,21 @@ DEOSpells["Nightmare Fire"] = {
 ```
 
 ###BUGS
-check for weapon enchant
+* check for weapon enchant
+
 ###TODO
-simplify the enabled tracking
-add support for debuff tracking
-add more examples to readme
-research all class bonuses and trinkets to look for additional tracking types
-movable with slash command
+* simplify the enabled tracking
+* add support for debuff tracking
+* add more examples to readme
+* research all class bonuses and trinkets to look for additional tracking types
+* movable with slash command
+
 ###FEATURES
-build slots for non-equipment?
-add support for multiple buff for a single aura (heroism)
-add support for debuff check (heroism)
-add support for item (potion)
-in game config: add/render tracked items
+* build slots for non-equipment?
+* add support for multiple buff for a single aura (heroism)
+* add support for debuff check (heroism)
+* add support for item (potion)
+* in game config: add/render tracked items
 
 ##🔮 DEO Text Hide
 ![alt tag](https://github.com/OOMM/addons/blob/master/DEO_Text_Hide.jpg)
@@ -34,8 +36,10 @@ in game config: add/render tracked items
 
 Hide keybind and macro text from buttons.
 ###BUGS
+
 ###TODO
-add slash command toggle
+* add slash command toggle
+
 ###FEATURES
 
 ##💊 DEO Additions
@@ -43,8 +47,12 @@ add slash command toggle
 > Lil things here and there
 
 Contains:
-Raid Marker Icon for the Player Unit Frame
+
+* Raid Marker Icon for the Player Unit Frame
+
 ###BUGS
+
 ###TODO
+
 ###FEATURES
-dungeon map
+* dungeon map
