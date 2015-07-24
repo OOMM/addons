@@ -1,5 +1,5 @@
 ## Interface: 60200
-## Title: DEO:Additions
+## Title: DEO:|cff74E4E7Additions|r
 ## Notes: Additional UI modifications
 
 Additions.lua
