@@ -1,5 +1,5 @@
 #OOMM
-##⚡ DEO Tracking
+##:crystal_ball: DEO Tracking
 ![alt tag](https://github.com/OOMM/addons/blob/master/DEO_Tracking.jpg)
 > Track Lord Season Begins
 
@@ -30,9 +30,9 @@ DEOSpells["Nightmare Fire"] = {
 * add support for item (potion)
 * in game config: add/render tracked items
 
-- - - -
   
-##🔮 DEO Text Hide
+  
+##:ring: DEO Text Hide
 ![alt tag](https://github.com/OOMM/addons/blob/master/DEO_Text_Hide.jpg)
 > Too much clutter
 
@@ -46,9 +46,9 @@ Hide keybind and macro text from buttons.
 ######Future Features
 * 
 
-- - - -
   
-##💊 DEO Additions
+    
+##:pill: DEO Additions
 ![alt tag](https://github.com/OOMM/addons/blob/master/DEO_Additions.jpg)
 > Lil things here and there
 
