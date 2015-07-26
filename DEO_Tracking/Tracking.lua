@@ -1,5 +1,5 @@
 DEO = LibStub("AceAddon-3.0"):NewAddon("DEO", "AceConsole-3.0", "AceEvent-3.0", "AceTimer-3.0")
-DEODebug = true --print function messages to ChatFrame4
+DEODebug = false --print function messages to ChatFrame4
 
 function DEO:SetState(aura)
 	local state = aura.state
