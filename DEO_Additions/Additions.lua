@@ -24,6 +24,11 @@ function DEOA:Start()
   else
     if DEOAContainer then DEOAContainer:Hide() end
   end
+  DEOA:TargetFrame()
+end
+
+function DEOA:TargetFrame()
+  PlayerFrameBackground:Hide()
 end
 
 DEOA:Start()
