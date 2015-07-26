@@ -1,32 +1,3 @@
--- Just copy/paste your code here now. It will execute every time the game loads.
--- http://www.arenajunkies.com/topic/222642-default-ui-scripts/
-
--- Class color UnitFrame names
---[[
-local frame = CreateFrame("FRAME")
-frame:RegisterEvent("GROUP_ROSTER_UPDATE")
-frame:RegisterEvent("PLAYER_TARGET_CHANGED")
-frame:RegisterEvent("PLAYER_FOCUS_CHANGED")
-frame:RegisterEvent("UNIT_FACTION")
-
-local function eventHandler(self, event, ...)
-        if UnitIsPlayer("target") then
-                c = RAID_CLASS_COLORS[select(2, UnitClass("target"))]
-                TargetFrameNameBackground:SetVertexColor(c.r, c.g, c.b)
-        end
-        if UnitIsPlayer("focus") then
-                c = RAID_CLASS_COLORS[select(2, UnitClass("focus"))]
-                FocusFrameNameBackground:SetVertexColor(c.r, c.g, c.b)
-        end
-end
-
-frame:SetScript("OnEvent", eventHandler)
-
-for _, BarTextures in pairs({TargetFrameNameBackground, FocusFrameNameBackground}) do
-        BarTextures:SetTexture("Interface\\TargetingFrame\\UI-StatusBar")
-end
-]]--
-
 -- Hide button texts
 local toggle = 0
 	-- Hide macro text
@@ -50,29 +21,6 @@ local toggle = 0
 			_G["PetActionButton"..i.."HotKey"]:SetAlpha(toggle) -- main bar
 	end
 
-
--- Show CastBar timers 
---[[
-CastingBarFrame.timer = CastingBarFrame:CreateFontString(nil);
-CastingBarFrame.timer:SetFont(STANDARD_TEXT_FONT,12,"OUTLINE");
-CastingBarFrame.timer:SetPoint("TOP", CastingBarFrame, "BOTTOM", 0, 0);
-CastingBarFrame.update = .1;
-hooksecurefunc("CastingBarFrame_OnUpdate", function(self, elapsed)
-        if not self.timer then return end
-        if self.update and self.update < elapsed then
-                if self.casting then
-                        self.timer:SetText(format("%2.1f/%1.1f", max(self.maxValue - self.value, 0), self.maxValue))
-                elseif self.channeling then
-                        self.timer:SetText(format("%.1f", max(self.value, 0)))
-                else
-                        self.timer:SetText("")
-                end
-                self.update = .1
-        else
-                self.update = self.update - elapsed
-        end
-end)
-]]--
 
 -- Slash commands
 SlashCmdList["CLCE"] = function() CombatLogClearEntries() end
