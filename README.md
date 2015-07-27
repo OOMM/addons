@@ -50,3 +50,6 @@ DEOSpells["Mark of Bleeding Hollow"] = {
 Contains:
 
 * Raid Marker Icon for the Player Unit Frame
+* Removed name background
+* Class colored health bars
+* Execute range coloring for health bars
