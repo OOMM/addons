@@ -49,6 +49,7 @@ function DEO:CreateAuras()
 	for slot=17,-7,-1 do
     tkey = order[slot]
     if tkey ~= nil then
+    if DEODebug then DEO:Print(ChatFrame4, "|cff22eEC2Positioning:|r", slot, ":",position) end
       _G[DEOSpells[tkey].id] = DEO:CreateAura(DEOSpells[tkey],parent,position,slot)
       _G[DEOSpells[tkey].id]:SetScale(.8)
       DEO:SetState(_G[DEOSpells[tkey].id])
@@ -70,7 +71,7 @@ function DEO:CreateAura(data, parent, position,slot)
   if nil == _G[frameId] then 
     aura = CreateFrame("FRAME", frameId, parent)
     if DEODebug then DEO:Print(ChatFrame4, "|cffC03E6CCreated:|r", frameId, data.id) end
-    aura:SetPoint("RIGHT",-42*position,1)
+
     aura:SetWidth(38)
     aura:SetHeight(38)
 
@@ -109,7 +110,7 @@ function DEO:CreateAura(data, parent, position,slot)
     aura = _G[frameId]
     if DEODebug then DEO:Print(ChatFrame4, "|cffF2C43BReused:|r", frameId, data.id) end
   end
-  
+  aura:SetPoint("RIGHT",-42*position,1)
   aura.icon:SetTexture(aura.iconPathUp)
   aura:Show()
 	aura.id = data.id
