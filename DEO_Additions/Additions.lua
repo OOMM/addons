@@ -46,6 +46,8 @@ function DEOA:UnitFrameAlter()
         else
           c = RAID_CLASS_COLORS[select(2, UnitClass("target"))]
           TargetFrameHealthBar:SetStatusBarColor(c.r, c.g, c.b)
+          local percentHP = UnitHealth("target")/UnitHealthMax("target")
+          if percentHP < 0.20 then TargetFrameHealthBar:SetStatusBarColor(1,0,0) end
         end        
   end
   if UnitExists("focus") then
@@ -53,39 +55,25 @@ function DEOA:UnitFrameAlter()
           FocusFrameHealthBar:SetStatusBarColor(c.r, c.g, c.b)
           FocusFrameNameBackground:Hide()
   end
-
+  if UnitExists("pet") then
+          c = RAID_CLASS_COLORS[select(2, UnitClass("pet"))]
+          PetFrameHealthBar:SetStatusBarColor(c.r, c.g, c.b)
+  end
 end
 DEOA:Start()
 SetCVar("cameraDistanceMax",50)
-CompactRaidFrameContainer:SetScale(0.5)
+CompactRaidFrameContainer:SetScale(0.7)
 MinimapCluster:SetScale(0.8)
 PlayerFrameGroupIndicator:Hide(); PlayerFrameGroupIndicator.Show = function() end;
-hooksecurefunc("TargetFrame_CheckDead", function(...) DEOA:UnitFrameAlter() end);
-hooksecurefunc("TargetFrame_Update", function(...) DEOA:UnitFrameAlter() end);
+--hooksecurefunc("TargetFrame_CheckDead", function(...) DEOA:UnitFrameAlter() end);
+--hooksecurefunc("TargetFrame_Update", function(...) DEOA:UnitFrameAlter() end);
 hooksecurefunc("TargetFrame_CheckFaction", function(...) DEOA:UnitFrameAlter() end);
 hooksecurefunc("TargetFrame_CheckClassification", function(...) DEOA:UnitFrameAlter() end);
 hooksecurefunc("TargetofTarget_Update", function(...) DEOA:UnitFrameAlter() end);
+hooksecurefunc("UnitFrameHealthBar_Update", function(...) DEOA:UnitFrameAlter() end);
+hooksecurefunc("HealthBar_OnValueChanged", function(...) DEOA:UnitFrameAlter() end);
 -- BossFrame hooks
 hooksecurefunc("BossTargetFrame_OnLoad", function(...) DEOA:UnitFrameAlter() end);
---HIDE COLORS BEHIND NAME
-hooksecurefunc("TargetFrame_CheckFaction", function(self)
-    self.nameBackground:SetVertexColor(0, 0, 0, 0);
-end)
 
--- CLASS COLOR HP BAR
-local function colour(statusbar, unit)
-        local _, class, c
-        if UnitIsPlayer(unit) and UnitIsConnected(unit) and unit == statusbar.unit and UnitClass(unit) then
-                _, class = UnitClass(unit)
-                c = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
-                statusbar:SetStatusBarColor(c.r, c.g, c.b)
-                --PlayerFrameHealthBar:SetStatusBarColor(0,1,0)
-        end
-end
-
-hooksecurefunc("UnitFrameHealthBar_Update", colour)
-hooksecurefunc("HealthBar_OnValueChanged", function(self)
-        colour(self, self.unit)
-end)
 DEOA:RegisterEvent("RAID_TARGET_UPDATE","Start")
 DEOA:RegisterEvent("UPDATE_WORLD_STATES","Start")
