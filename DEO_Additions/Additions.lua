@@ -62,7 +62,7 @@ function DEOA:UnitFrameAlter()
 end
 DEOA:Start()
 SetCVar("cameraDistanceMax",50)
-CompactRaidFrameContainer:SetScale(0.7)
+CompactRaidFrameContainer:SetScale(0.8)
 MinimapCluster:SetScale(0.8)
 PlayerFrameGroupIndicator:Hide(); PlayerFrameGroupIndicator.Show = function() end;
 --hooksecurefunc("TargetFrame_CheckDead", function(...) DEOA:UnitFrameAlter() end);
